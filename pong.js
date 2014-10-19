@@ -84,11 +84,9 @@
 
 			if (collision(this, game.player)) {
 				this.vx = -this.vx;
-				// this.vy += game.player.vy / 2;
 			}
 			if (collision(this, game.computer)) {
 				this.vx = -this.vx;
-				// this.vy += game.computer.vy / 2;
 			}
 
 			if (this.x + this.radius >= game.width) {
