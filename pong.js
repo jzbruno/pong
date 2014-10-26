@@ -25,34 +25,33 @@
 		tick();
 	};
 
-	Game.prototype = {
-		update: function () {
-			this.ball.update(this);
-			this.player.update(this);
-			this.computer.update(this);
-		},
-		draw: function () {
-			this.ctx.clearRect(0, 0, this.width, this.height);
+	Game.prototype.update = function update() {
+		this.ball.update(this);
+		this.player.update(this);
+		this.computer.update(this);
+	};
 
-			// Draw entities.
-			this.ball.draw(this.ctx);
-			this.player.draw(this.ctx);
-			this.computer.draw(this.ctx);
+	Game.prototype.draw = function draw() {
+		this.ctx.clearRect(0, 0, this.width, this.height);
 
-			// Draw center line.
-			this.ctx.moveTo(this.width / 2, 10);
-			this.ctx.lineTo(this.width / 2, this.height - 10);
-			this.ctx.stroke();
+		// Draw entities.
+		this.ball.draw(this.ctx);
+		this.player.draw(this.ctx);
+		this.computer.draw(this.ctx);
 
-			// Draw score.
-			this.ctx.font = '30px Arial';
-			this.ctx.textAlign = 'right';
-			this.ctx.strokeText(
-				this.score.player, (this.width / 2) - 30, this.height - 10);
-			this.ctx.textAlign = 'left';
-			this.ctx.strokeText(
-				this.score.computer, (this.width / 2) + 30, this.height - 10, 60);
-		}
+		// Draw center line.
+		this.ctx.moveTo(this.width / 2, 10);
+		this.ctx.lineTo(this.width / 2, this.height - 10);
+		this.ctx.stroke();
+
+		// Draw score.
+		this.ctx.font = '30px Arial';
+		this.ctx.textAlign = 'right';
+		this.ctx.strokeText(
+			this.score.player, (this.width / 2) - 30, this.height - 10);
+		this.ctx.textAlign = 'left';
+		this.ctx.strokeText(
+			this.score.computer, (this.width / 2) + 30, this.height - 10, 60);
 	};
 
 	function Ball(x, y) {
@@ -70,42 +69,41 @@
 		this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 	};
 
-	Ball.prototype = {
-		update: function (game) {
-			this.y += this.vy;
-			this.x += this.vx;
+	Ball.prototype.update = function update(game) {
+		this.y += this.vy;
+		this.x += this.vx;
 
-			if (this.y + this.radius >= game.height || this.y - this.radius <= 0) {
-				this.vy = -this.vy;
-			}
-			if (this.x + this.radius >= game.width || this.x - this.radius <= 0) {
-				this.vx = -this.vx;
-			}
-
-			if (collision(this, game.player)) {
-				this.vx = -this.vx;
-			}
-			if (collision(this, game.computer)) {
-				this.vx = -this.vx;
-			}
-
-			if (this.x + this.radius >= game.width) {
-				game.score.player += 1;
-				this.x = game.width / 2;
-				this.y = game.height / 2;
-			}
-			if (this.x - this.radius <= 0) {
-				game.score.computer += 1;
-				this.x = game.width / 2;
-				this.y = game.height / 2;
-			}
-		},
-		draw: function (ctx) {
-			ctx.beginPath();
-			ctx.arc(this.x, this.y, this.radius, 2 * Math.PI, false);
-			ctx.stroke();
-			ctx.closePath();
+		if (this.y + this.radius >= game.height || this.y - this.radius <= 0) {
+			this.vy = -this.vy;
 		}
+		if (this.x + this.radius >= game.width || this.x - this.radius <= 0) {
+			this.vx = -this.vx;
+		}
+
+		if (collision(this, game.player)) {
+			this.vx = -this.vx;
+		}
+		if (collision(this, game.computer)) {
+			this.vx = -this.vx;
+		}
+
+		if (this.x + this.radius >= game.width) {
+			game.score.player += 1;
+			this.x = game.width / 2;
+			this.y = game.height / 2;
+		}
+		if (this.x - this.radius <= 0) {
+			game.score.computer += 1;
+			this.x = game.width / 2;
+			this.y = game.height / 2;
+		}
+	};
+
+	Ball.prototype.draw = function draw(ctx) {
+		ctx.beginPath();
+		ctx.arc(this.x, this.y, this.radius, 2 * Math.PI, false);
+		ctx.stroke();
+		ctx.closePath();
 	};
 
 	function Player(y, length) {
@@ -119,23 +117,22 @@
 		this.controller = new Controller();
 	};
 
-	Player.prototype = {
-		update: function (game) {
-			if (this.controller.isDown(this.controller.UP)) {
-				this.y -= 1 * this.speed;
-			} else if (this.controller.isDown(this.controller.DOWN)) {
-				this.y += 1 * this.speed;
-			}
-
-			if (this.y < 0) {
-				this.y = 0;
-			} else if (this.y + this.height > game.height) {
-				this.y = game.height - this.height;
-			}
-		},
-		draw: function (ctx) {
-			ctx.strokeRect(this.x, this.y, this.width, this.height);
+	Player.prototype.update = function update(game) {
+		if (this.controller.isDown(this.controller.UP)) {
+			this.y -= 1 * this.speed;
+		} else if (this.controller.isDown(this.controller.DOWN)) {
+			this.y += 1 * this.speed;
 		}
+
+		if (this.y < 0) {
+			this.y = 0;
+		} else if (this.y + this.height > game.height) {
+			this.y = game.height - this.height;
+		}
+	};
+
+	Player.prototype.draw = function draw(ctx) {
+		ctx.strokeRect(this.x, this.y, this.width, this.height);
 	};
 
 	function Computer(x, y, length, ball) {
@@ -148,18 +145,17 @@
 		this.ball = ball;
 	};
 
-	Computer.prototype = {
-		update: function (game) {
-			var delta = this.y - this.ball.y;
-			if (delta < 0) {
-				this.y += this.speed;
-			} else if (delta > this.speed) {
-				this.y -= this.speed;
-			}
-		},
-		draw: function (ctx) {
-			ctx.strokeRect(this.x, this.y, this.width, this.height);
+	Computer.prototype.update = function update(game) {
+		var delta = this.y - this.ball.y;
+		if (delta < 0) {
+			this.y += this.speed;
+		} else if (delta > this.speed) {
+			this.y -= this.speed;
 		}
+	};
+
+	Computer.prototype.draw = function draw(ctx) {
+		ctx.strokeRect(this.x, this.y, this.width, this.height);
 	};
 
 	function Controller() {
